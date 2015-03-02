@@ -2,7 +2,7 @@ package scoverage
 
 import java.io.File
 
-import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.scalatest.{ BeforeAndAfter, FunSuite }
 
 /**
  * Verify that [[Invoker.invoked()]] can handle a multi-module project
@@ -11,7 +11,8 @@ class InvokerMultiModuleTest extends FunSuite with BeforeAndAfter {
 
   val measurementDir = Array(
     new File("target/invoker-test.measurement0"),
-    new File("target/invoker-test.measurement1"))
+    new File("target/invoker-test.measurement1")
+  )
 
   before {
     deleteMeasurementFiles()
