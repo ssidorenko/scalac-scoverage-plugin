@@ -119,6 +119,7 @@ class ScoverageInstrumentationComponent(val global: Global)
     def safeSource(tree: Tree): Option[SourceFile] = if (tree.pos.isDefined) Some(tree.pos.source) else None
 
     def invokeCall(id: Int): Tree = {
+      println(options.dataDir)
       Apply(
         Select(
           Select(

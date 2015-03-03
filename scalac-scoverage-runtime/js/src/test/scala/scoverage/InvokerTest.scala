@@ -9,7 +9,7 @@ object InvokerTest extends TestSuite {
     'Invoker {
       val measurementDir = new File("target/invoker-test.measurement")
       measurementDir.mkdirs()
-      Invoker.invoked(1, measurementDir.toString)
+      Invoker.invoked(1, measurementDir.getPath)
       measurementDir.delete()
 
     }

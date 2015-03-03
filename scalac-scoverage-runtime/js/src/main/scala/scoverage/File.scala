@@ -6,7 +6,7 @@ import scala.scalajs.js
 
 class File(path: String) {
 	def this(path: String, child:String) = {
-		this(File.path.join(path, child))
+    this(File.nodePath.join(path, child))
 	}
 
 
@@ -20,7 +20,7 @@ class File(path: String) {
 	}
 
   def getName(): String = {
-    File.path.basename(path)
+    File.nodePath.basename(path)
   }
 
   def getPath(): String = {
@@ -29,8 +29,12 @@ class File(path: String) {
 
 	def mkdirs(): Boolean = {
 		path.split("/").foldLeft("")((acc: String, x:String) => {
-			val new_acc = File.path.join(acc, x)
-			File.fs.mkdirSync(new_acc)
+			val new_acc = File.nodePath.join(acc, x)
+      try {
+			  File.fs.mkdirSync(new_acc)
+        } catch {
+          case e: Exception => 
+        }
 			new_acc
 		})
 		true // TODO handle errors
@@ -76,9 +80,7 @@ trait NodePath extends js.Object {
   def join(paths: String*): String = js.native
 }
 
-private[scoverage] object File extends js.GlobalScope {
-  js.Dynamic.global.require("fs")
-  js.Dynamic.global.require("path")
-  val fs: FS = js.native
-  val path: NodePath = js.native
+private[scoverage] object File {
+  val fs: FS = js.Dynamic.global.require("fs").asInstanceOf[FS]
+  val nodePath: NodePath = js.Dynamic.global.require("path").asInstanceOf[NodePath]
 }
