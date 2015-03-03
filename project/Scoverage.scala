@@ -5,6 +5,9 @@ import sbtrelease.ReleasePlugin.ReleaseKeys
 import com.typesafe.sbt.pgp.PgpKeys
 import org.scalajs.sbtplugin.cross.CrossProject
 import org.scalajs.sbtplugin.cross.CrossType
+import org.scalajs.sbtplugin.ScalaJSPlugin
+import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+
 
 object Scoverage extends Build {
 
@@ -77,6 +80,11 @@ object Scoverage extends Build {
       "org.mockito" % "mockito-all" % MockitoVersion % "test",
       "org.scalatest" %% "scalatest" % ScalatestVersion % "test"
     ))
+    .jsSettings(
+      libraryDependencies += "com.lihaoyi" %%% "utest" % "0.3.0",
+      testFrameworks += new TestFramework("utest.runner.Framework"),
+      scalaJSStage in Global := FastOptStage
+    )
 
   lazy val `scalac-scoverage-runtimeJVM` = runtime.jvm
   lazy val `scalac-scoverage-runtimeJS` = runtime.js

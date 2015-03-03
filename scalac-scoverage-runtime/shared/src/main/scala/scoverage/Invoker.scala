@@ -3,15 +3,14 @@ package scoverage
 import java.io.{FileFilter, File, FileWriter}
 
 import scala.collection.{mutable, Set}
-import scala.collection.concurrent.TrieMap
 import scala.io.Source
 
 /** @author Stephen Samuel */
 object Invoker {
 
   private val MeasurementsPrefix = "scoverage.measurements."
-  private val threadFiles = new ThreadLocal[TrieMap[String, FileWriter]]
-  private val ids = TrieMap.empty[(String, Int), Any]
+  private val threadFiles = new ThreadLocal[CrossMap[String, FileWriter]]
+  private val ids = CrossMap.empty[(String, Int), Any]
 
   /**
    * We record that the given id has been invoked by appending its id to the coverage
@@ -39,7 +38,7 @@ object Invoker {
       // and because file appends via FileWriter are not atomic on Windows.
       var files = threadFiles.get()
       if (files == null)
-        files = TrieMap.empty[String, FileWriter]
+        files = CrossMap.empty[String, FileWriter]
       threadFiles.set(files)
 
       val writer = files.getOrElseUpdate(dataDir, new FileWriter(measurementFile(dataDir), true))
@@ -50,7 +49,7 @@ object Invoker {
   }
 
   def measurementFile(dataDir: File): File = measurementFile(dataDir.getAbsolutePath)
-  def measurementFile(dataDir: String): File = new File(dataDir, MeasurementsPrefix + Thread.currentThread.getId)
+  def measurementFile(dataDir: String): File = new File(dataDir, MeasurementsPrefix + CrossThread.currentThread.getId)
 
   def findMeasurementFiles(dataDir: String): Array[File] = findMeasurementFiles(new File(dataDir))
   def findMeasurementFiles(dataDir: File): Array[File] = dataDir.listFiles(new FileFilter {
