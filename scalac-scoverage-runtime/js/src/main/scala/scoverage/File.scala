@@ -9,10 +9,9 @@ class File(path: String) {
     this(File.nodePath.join(path, child))
 	}
 
-
-	def delete(): Boolean = {
-		File.fs.unlinkSync(path)
-		true // TODO see above
+	def delete(): Unit = {
+    if(isDirectory()) File.fs.rmdirSync(path)
+    else File.fs.unlinkSync(path)
 	}
 
 	def getAbsolutePath(): String = {
@@ -27,7 +26,11 @@ class File(path: String) {
     path
   }
 
-	def mkdirs(): Boolean = {
+  def isDirectory(): Boolean = {
+    File.fs.lstatSync(path).isDirectory()
+  }
+
+	def mkdirs(): Unit = {
 		path.split("/").foldLeft("")((acc: String, x:String) => {
 			val new_acc = File.nodePath.join(acc, x)
       try {
@@ -37,7 +40,6 @@ class File(path: String) {
         }
 			new_acc
 		})
-		true // TODO handle errors
 	}
 
 	def listFiles(): Array[File] = {
@@ -45,7 +47,7 @@ class File(path: String) {
 		val files = File.fs.readdirSync(path)
 		val filesArray = new Array[File](files.length)
 		for((item, i) <- filesArray.zipWithIndex) {
-			filesArray(i) = new File(files(i))
+			filesArray(i) = new File(File.nodePath.join(this.getPath(), files(i)))
 		}	
 		filesArray
 	}
@@ -64,12 +66,19 @@ trait FileFilter {
 	def accept(file:File): Boolean
 }
 
+trait FSStats extends js.Object {
+  def isDirectory(): Boolean = js.native
+}
+
 trait FS extends js.Object {
-	def mkdirSync(path:String): Unit = js.native
+  def closeSync(fd: Int): Unit = js.native
+  def lstatSync(path: String): FSStats = js.native
+	def mkdirSync(path: String): Unit = js.native
   def openSync(path: String, flags: String): Int = js.native
 	def realpathSync(path: String): String = js.native
 	def readdirSync(path: String): js.Array[String] = js.native
   def readFileSync(path: String): String = js.native
+  def rmdirSync(path:String): Unit = js.native
   def unlinkSync(path:String): Unit = js.native
   def writeSync(fd: Int, csq: CharSequence): Unit = js.native
 
