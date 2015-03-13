@@ -14,6 +14,12 @@ class FileWriter(file:File, append:Boolean) {
 		this
 	}
 
+  def close(): Unit = {
+    File.fs.closeSync(this.fd)
+  }
+
+  override def finalize(): Unit = close()
+
 	def flush() = {}
 }
 	
