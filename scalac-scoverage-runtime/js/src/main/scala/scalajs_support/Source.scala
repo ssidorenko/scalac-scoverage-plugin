@@ -1,4 +1,5 @@
-package scoverage
+package scalajs_support
+
 import scala.io.{Source => OrigSource}
 
 object Source {

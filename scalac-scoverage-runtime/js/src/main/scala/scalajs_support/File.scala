@@ -1,4 +1,4 @@
-package scoverage
+package scalajs_support
 
 import scala.scalajs.js
 
@@ -89,7 +89,7 @@ trait NodePath extends js.Object {
   def join(paths: String*): String = js.native
 }
 
-private[scoverage] object File {
+private[scalajs_support] object File {
   val fs: FS = js.Dynamic.global.require("fs").asInstanceOf[FS]
   val nodePath: NodePath = js.Dynamic.global.require("path").asInstanceOf[NodePath]
 }

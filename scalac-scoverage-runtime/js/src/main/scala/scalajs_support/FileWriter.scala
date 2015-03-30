@@ -1,4 +1,4 @@
-package scoverage
+package scalajs_support
 
 class FileWriter(file:File, append:Boolean) {
 	import File.fs

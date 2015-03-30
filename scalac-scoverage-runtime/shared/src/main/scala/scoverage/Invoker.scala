@@ -1,17 +1,13 @@
 package scoverage
 
-import java.io.{FileFilter, File, FileWriter}
-
 import scala.collection.{mutable, Set}
-import scala.collection.concurrent.TrieMap
-import scala.io.Source
 
 /** @author Stephen Samuel */
 object Invoker {
 
   private val MeasurementsPrefix = "scoverage.measurements."
-  private val threadFiles = new ThreadLocal[TrieMap[String, FileWriter]]
-  private val ids = TrieMap.empty[(String, Int), Any]
+  private val threadFiles = new ThreadLocal[Platform.ThreadSafeMap[String, Platform.FileWriter]]
+  private val ids = Platform.ThreadSafeMap.empty[(String, Int), Any]
 
   /**
    * We record that the given id has been invoked by appending its id to the coverage
@@ -39,28 +35,28 @@ object Invoker {
       // and because file appends via FileWriter are not atomic on Windows.
       var files = threadFiles.get()
       if (files == null)
-        files = TrieMap.empty[String, FileWriter]
+        files = Platform.ThreadSafeMap.empty[String, Platform.FileWriter]
       threadFiles.set(files)
-      val writer = files.getOrElseUpdate(dataDir, new FileWriter(measurementFile(dataDir), true))
+      val writer = files.getOrElseUpdate(dataDir, new Platform.FileWriter(measurementFile(dataDir), true))
       writer.append(id.toString + '\n').flush()
 
       ids.put((dataDir, id), ())
     }
   }
 
-  def measurementFile(dataDir: File): File = measurementFile(dataDir.getAbsolutePath)
-  def measurementFile(dataDir: String): File = new File(dataDir, MeasurementsPrefix + CrossThread.currentThread.getId)
+  def measurementFile(dataDir: Platform.File): Platform.File = measurementFile(dataDir.getAbsolutePath)
+  def measurementFile(dataDir: String): Platform.File = new Platform.File(dataDir, MeasurementsPrefix + Thread.currentThread.getId)
 
-  def findMeasurementFiles(dataDir: String): Array[File] = findMeasurementFiles(new File(dataDir))
-  def findMeasurementFiles(dataDir: File): Array[File] = dataDir.listFiles(new FileFilter {
-    override def accept(pathname: File): Boolean = pathname.getName.startsWith(MeasurementsPrefix)
+  def findMeasurementFiles(dataDir: String): Array[Platform.File] = findMeasurementFiles(new Platform.File(dataDir))
+  def findMeasurementFiles(dataDir: Platform.File): Array[Platform.File] = dataDir.listFiles(new Platform.FileFilter {
+    override def accept(pathname: Platform.File): Boolean = pathname.getName.startsWith(MeasurementsPrefix)
   })
 
   // loads all the invoked statement ids from the given files
-  def invoked(files: Seq[File]): Set[Int] = {
+  def invoked(files: Seq[Platform.File]): Set[Int] = {
     val acc = mutable.Set[Int]()
     files.foreach { file =>
-      val reader = Source.fromFile(file)
+      val reader = Platform.Source.fromFile(file)
       for ( line <- reader.getLines() ) {
         if (!line.isEmpty) {
           acc += line.toInt
