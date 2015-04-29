@@ -83,7 +83,7 @@ object Scoverage extends Build {
     .jsSettings(
       libraryDependencies += "com.lihaoyi" %%% "utest" % "0.3.0",
       testFrameworks += new TestFramework("utest.runner.Framework"),
-      scalaJSStage in Global := FastOptStage
+      scalaJSStage := FastOptStage
     )
 
   lazy val `scalac-scoverage-runtimeJVM` = runtime.jvm
