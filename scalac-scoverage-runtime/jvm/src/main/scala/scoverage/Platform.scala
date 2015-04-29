@@ -1,11 +1,13 @@
 package scoverage
 
 import scala.collection.concurrent.TrieMap
-import scala.collection.generic.{CanBuildFrom, MutableMapFactory}
-import java.io.{File => SupportFile,
-  FileWriter => SupportFileWriter, FileFilter => SupportFileFilter}
-import scala.io.{Source => SupportSource}
-
+import scala.collection.generic.{ CanBuildFrom, MutableMapFactory }
+import java.io.{
+  File => SupportFile,
+  FileWriter => SupportFileWriter,
+  FileFilter => SupportFileFilter
+}
+import scala.io.{ Source => SupportSource }
 
 object Platform {
   type ThreadSafeMap[A, B] = TrieMap[A, B]

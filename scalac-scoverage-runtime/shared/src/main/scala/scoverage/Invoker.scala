@@ -1,6 +1,6 @@
 package scoverage
 
-import scala.collection.{mutable, Set}
+import scala.collection.{ mutable, Set }
 
 /** @author Stephen Samuel */
 object Invoker {
@@ -57,7 +57,7 @@ object Invoker {
     val acc = mutable.Set[Int]()
     files.foreach { file =>
       val reader = Platform.Source.fromFile(file)
-      for ( line <- reader.getLines() ) {
+      for (line <- reader.getLines()) {
         if (!line.isEmpty) {
           acc += line.toInt
         }

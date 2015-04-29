@@ -4,9 +4,8 @@ import utest._
 
 object InvokerTest extends TestSuite {
 
-
   def tests = TestSuite {
-    'Invoker {
+    'Invoker{
       val measurementDir = new Platform.File("target/invoker-test.measurement")
       measurementDir.mkdirs()
       Invoker.invoked(1, measurementDir.getPath)

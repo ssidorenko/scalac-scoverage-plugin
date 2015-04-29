@@ -1,6 +1,6 @@
 package scalajs_support
 
-import scala.io.{Source => OrigSource}
+import scala.io.{ Source => OrigSource }
 
 object Source {
   def fromFile(file: File) = {
