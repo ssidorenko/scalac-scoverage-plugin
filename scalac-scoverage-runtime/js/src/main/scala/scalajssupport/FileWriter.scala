@@ -1,4 +1,4 @@
-package scalajs_support
+package scalajssupport
 
 class FileWriter(file: File, append: Boolean) {
   import File.fs

@@ -18,8 +18,3 @@ credentials.sbt
 .scala_dependencies
 *.iml
 
-# OS X specific
-.DS_Store
-
-*.sublime-project
-*.sublime-workspace

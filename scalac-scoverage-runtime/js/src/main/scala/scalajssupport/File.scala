@@ -1,4 +1,4 @@
-package scalajs_support
+package scalajssupport
 
 import scala.scalajs.js
 
