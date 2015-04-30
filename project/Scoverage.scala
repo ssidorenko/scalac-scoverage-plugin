@@ -11,7 +11,7 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 object Scoverage extends Build {
 
-  val Org = "org.scoverage"
+  val Org = "ch.sidorenko.scoverage"
   val Scala = "2.11.4"
   val MockitoVersion = "1.9.5"
   val ScalatestVersion = "2.2.2"
