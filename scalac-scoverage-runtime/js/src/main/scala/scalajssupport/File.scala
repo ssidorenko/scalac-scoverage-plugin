@@ -25,7 +25,14 @@ class File(path: String) {
   }
 
   def isDirectory(): Boolean = {
-    File.fs.lstatSync(path).isDirectory()
+    try {
+      File.fs.lstatSync(path).isDirectory()
+    }
+    catch {
+      // TODO find out what's the best way to deal with exceptions here
+      // (likely not like this)
+      case e: Exception => false
+    }
   }
 
   def mkdirs(): Unit = {
@@ -87,7 +94,7 @@ trait NodePath extends js.Object {
   def join(paths: String*): String = js.native
 }
 
-private[scalajs_support] object File {
+private[scalajssupport] object File {
   val fs: FS = js.Dynamic.global.require("fs").asInstanceOf[FS]
   val nodePath: NodePath = js.Dynamic.global.require("path").asInstanceOf[NodePath]
 }
