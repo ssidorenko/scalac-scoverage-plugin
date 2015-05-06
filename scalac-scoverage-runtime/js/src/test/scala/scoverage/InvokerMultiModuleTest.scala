@@ -24,8 +24,9 @@ object InvokerTest extends TestSuite {
 
       // Verify measurements went to correct directory
       val measurementFiles0 = Invoker.findMeasurementFiles(measurementDir(0))
+      
       val idsFromFile0 = Invoker.invoked(measurementFiles0).toSet
-
+      
       idsFromFile0 == testIds.filter { i: Int => i % 2 == 0 }
 
       val measurementFiles1 = Invoker.findMeasurementFiles(measurementDir(0))

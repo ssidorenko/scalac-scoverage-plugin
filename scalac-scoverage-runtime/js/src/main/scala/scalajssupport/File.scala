@@ -62,7 +62,7 @@ class File(path: String) {
   }
 
   def readFile(): String = {
-    File.fs.readFileSync(path)
+    File.fs.readFileSync(path, js.Dynamic.literal(encoding="utf-8"))
   }
 
 }
@@ -82,7 +82,7 @@ trait FS extends js.Object {
   def openSync(path: String, flags: String): Int = js.native
   def realpathSync(path: String): String = js.native
   def readdirSync(path: String): js.Array[String] = js.native
-  def readFileSync(path: String): String = js.native
+  def readFileSync(path: String, options:js.Dynamic): String = js.native
   def rmdirSync(path: String): Unit = js.native
   def unlinkSync(path: String): Unit = js.native
   def writeSync(fd: Int, csq: CharSequence): Unit = js.native
