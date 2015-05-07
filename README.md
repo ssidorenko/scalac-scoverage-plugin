@@ -5,6 +5,9 @@ scoverage is a free Apache licensed code coverage tool for scala that offers sta
 scoverage is available for sbt, maven, and gradle.
 
 [![Build Status](https://travis-ci.org/scoverage/scalac-scoverage-plugin.svg?branch=master)](https://travis-ci.org/scoverage/scalac-scoverage-plugin)
+[![License](http://img.shields.io/:license-Apache%202-red.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+[![Join the chat at https://gitter.im/scoverage/scoverage](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/scoverage/scoverage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Join the [scoverage](http://groups.google.com/group/scala-code-coverage-tool)
 google group for help, bug reports, feature requests, and general
@@ -15,6 +18,10 @@ To see scoverage in action check out the [samples](https://github.com/scoverage/
 ![Screenshot of scoverage report html](misc/screenshot2.png)
 
 ### Release History
+
+##### 26th April 2015 1.1.0
+
+* Bug fixes
 
 ##### 23rd January 2015 1.0.4
 
@@ -201,7 +208,7 @@ Further details are given in the plugin readme's.
 ```
 This software is licensed under the Apache 2 license, quoted below.
 
-Copyright 2013-2014 Stephen Samuel
+Copyright 2013-2015 Stephen Samuel
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License. You may obtain a copy of

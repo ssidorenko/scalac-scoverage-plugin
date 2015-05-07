@@ -2,12 +2,16 @@ package scoverage.report
 
 import java.io.File
 
-import _root_.scoverage._
+import scoverage._
 
 import scala.xml.{Node, PrettyPrinter}
 
 /** @author Stephen Samuel */
-class ScoverageXmlWriter(sourceDir: File, outputDir: File, debug: Boolean) {
+class ScoverageXmlWriter(sourceDirectories: Seq[File], outputDir: File, debug: Boolean) extends BaseReportWriter(sourceDirectories, outputDir) {
+
+  def this (sourceDir: File, outputDir: File, debug: Boolean) {
+    this(Seq(sourceDir), outputDir, debug);
+  }
 
   def write(coverage: Coverage): Unit = {
     val file = IOUtils.reportFile(outputDir, debug)
@@ -42,7 +46,8 @@ class ScoverageXmlWriter(sourceDir: File, outputDir: File, debug: Boolean) {
                    symbol={Serializer.escape(stmt.symbolName)}
                    tree={Serializer.escape(stmt.treeName)}
                    branch={stmt.branch.toString}
-                   invocation-count={stmt.count.toString}>
+                   invocation-count={stmt.count.toString}
+                   ignored={stmt.ignored.toString}>
           {Serializer.escape(stmt.desc)}
         </statement>
       case false =>
@@ -56,7 +61,8 @@ class ScoverageXmlWriter(sourceDir: File, outputDir: File, debug: Boolean) {
                      end={stmt.end.toString}
                      line={stmt.line.toString}
                      branch={stmt.branch.toString}
-                     invocation-count={stmt.count.toString}/>
+                     invocation-count={stmt.count.toString}
+                     ignored={stmt.ignored.toString}/>
     }
   }
 
@@ -74,7 +80,7 @@ class ScoverageXmlWriter(sourceDir: File, outputDir: File, debug: Boolean) {
 
   private def klass(klass: MeasuredClass): Node = {
     <class name={klass.name}
-           filename={klass.source.replace(sourceDir.getAbsolutePath, "")}
+           filename={relativeSource(klass.source)}
            statement-count={klass.statementCount.toString}
            statements-invoked={klass.invokedStatementCount.toString}
            statement-rate={klass.statementCoverageFormatted}
@@ -97,4 +103,3 @@ class ScoverageXmlWriter(sourceDir: File, outputDir: File, debug: Boolean) {
   }
 
 }
-
