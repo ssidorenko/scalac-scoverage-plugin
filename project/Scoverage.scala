@@ -7,6 +7,7 @@ import org.scalajs.sbtplugin.cross.CrossProject
 import org.scalajs.sbtplugin.cross.CrossType
 import org.scalajs.sbtplugin.ScalaJSPlugin
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+//import org.scalajs.jsenv.phantomjs.PhantomJSEnv
 
 
 object Scoverage extends Build {
@@ -83,7 +84,9 @@ object Scoverage extends Build {
     .jsSettings(
       libraryDependencies += "com.lihaoyi" %%% "utest" % "0.3.0",
       testFrameworks += new TestFramework("utest.runner.Framework"),
-      scalaJSStage := FastOptStage
+      scalaJSStage := FastOptStage,
+      jsDependencies += RuntimeDOM,
+      postLinkJSEnv := new ScoveragePhantomJSEnv(jettyClassLoader=scalaJSPhantomJSClassLoader.value)
     )
 
   lazy val `scalac-scoverage-runtimeJVM` = runtime.jvm

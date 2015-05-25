@@ -1,21 +1,17 @@
 package scalajssupport
 
 class FileWriter(file: File, append: Boolean) {
-  import File.fs
-
-  val fd: Int = fs.openSync(file.getPath(), if (append) "a" else "w")
-
   def this(file: File) = this(file, false)
   def this(file: String) = this(new File(file), false)
   def this(file: String, append: Boolean) = this(new File(file), append)
 
   def append(csq: CharSequence) = {
-    fs.writeSync(this.fd, csq)
+    File.write(file.getPath, csq.toString)
     this
   }
 
   def close(): Unit = {
-    File.fs.closeSync(this.fd)
+    // do nothing as we don't open a FD to the file, as phantomJS does not use FDs
   }
 
   override def finalize(): Unit = close()

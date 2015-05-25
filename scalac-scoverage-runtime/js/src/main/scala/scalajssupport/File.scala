@@ -3,98 +3,70 @@ package scalajssupport
 import scala.scalajs.js
 
 class File(path: String) {
+  val _file = if (!js.Dynamic.global.hasOwnProperty("window").asInstanceOf[Boolean]) new NodeFile(path)
+    // else (js.Dynamic.global.window.hasOwnProperty("_phantom").asInstanceOf[Boolean])
+    else new PhantomFile(path)
+  
+
   def this(path: String, child: String) = {
-    this(File.nodePath.join(path, child))
+    this(File.pathJoin(path, child))
   }
 
   def delete(): Unit = {
-    if (isDirectory()) File.fs.rmdirSync(path)
-    else File.fs.unlinkSync(path)
+    _file.delete()
   }
-
   def getAbsolutePath(): String = {
-    File.fs.realpathSync(path)
+    _file.getAbsolutePath()
   }
 
   def getName(): String = {
-    File.nodePath.basename(path)
+    _file.getName()
   }
 
   def getPath(): String = {
-    path
+    _file.getPath()
   }
 
   def isDirectory(): Boolean = {
-    try {
-      File.fs.lstatSync(path).isDirectory()
-    }
-    catch {
-      // TODO find out what's the best way to deal with exceptions here
-      // (likely not like this)
-      case e: Exception => false
-    }
+    _file.isDirectory()
   }
 
   def mkdirs(): Unit = {
-    path.split("/").foldLeft("")((acc: String, x: String) => {
-      val new_acc = File.nodePath.join(acc, x)
-      try {
-        File.fs.mkdirSync(new_acc)
-      } catch {
-        case e: Exception =>
-      }
-      new_acc
-    })
+    _file.mkdirs()
   }
 
-  def listFiles(): Array[File] = {
-    // Doesn't seem really efficient, need to check if there's a better way to transform js.Array
-    val files = File.fs.readdirSync(path)
-    val filesArray = new Array[File](files.length)
-    for ((item, i) <- filesArray.zipWithIndex) {
-      filesArray(i) = new File(File.nodePath.join(this.getPath(), files(i)))
-    }
-    filesArray
+  def listFiles(): Array[File]= {
+    _file.listFiles().toArray
   }
 
   def listFiles(filter: FileFilter): Array[File] = {
-    listFiles().filter(filter.accept)
+    _file.listFiles().filter(filter.accept).toArray
   }
 
   def readFile(): String = {
-    File.fs.readFileSync(path, js.Dynamic.literal(encoding="utf-8"))
+    _file.readFile()
   }
-
 }
 
-trait FileFilter {
-  def accept(file: File): Boolean
-}
+object File {
+  sealed trait JSEnv
+  case object Node extends JSEnv
+  case object Phantom extends JSEnv
 
-trait FSStats extends js.Object {
-  def isDirectory(): Boolean = js.native
-}
+  val jsEnv = if (!js.Dynamic.global.hasOwnProperty("window").asInstanceOf[Boolean])
+    Node
+  else
+    Phantom
 
-trait FS extends js.Object {
-  def closeSync(fd: Int): Unit = js.native
-  def lstatSync(path: String): FSStats = js.native
-  def mkdirSync(path: String): Unit = js.native
-  def openSync(path: String, flags: String): Int = js.native
-  def realpathSync(path: String): String = js.native
-  def readdirSync(path: String): js.Array[String] = js.native
-  def readFileSync(path: String, options:js.Dynamic): String = js.native
-  def rmdirSync(path: String): Unit = js.native
-  def unlinkSync(path: String): Unit = js.native
-  def writeSync(fd: Int, csq: CharSequence): Unit = js.native
+  def pathJoin(path: String, child: String): String = 
+    jsEnv match {
+      case Phantom => PhantomFile.pathJoin(path, child)
+      case Node => NodeFile.nodePath.join(path, child)
+    }
 
-}
-
-trait NodePath extends js.Object {
-  def basename(path: String): String = js.native
-  def join(paths: String*): String = js.native
-}
-
-private[scalajssupport] object File {
-  val fs: FS = js.Dynamic.global.require("fs").asInstanceOf[FS]
-  val nodePath: NodePath = js.Dynamic.global.require("path").asInstanceOf[NodePath]
+  def write(path: String, data: String, mode: String = "a") = 
+    jsEnv match {
+      case Phantom => PhantomFile.write(path, data, mode)
+      case Node => NodeFile.fs.writeFileSync(path, data, js.Dynamic.literal(flag=mode))
+    }
 }
