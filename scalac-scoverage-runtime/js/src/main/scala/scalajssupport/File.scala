@@ -1,12 +1,16 @@
 package scalajssupport
 
 import scala.scalajs.js
+import js.Dynamic.{global => g}
 
 class File(path: String) {
-  val _file = if (!js.Dynamic.global.hasOwnProperty("window").asInstanceOf[Boolean]) new NodeFile(path)
-    // else (js.Dynamic.global.window.hasOwnProperty("_phantom").asInstanceOf[Boolean])
-    else new PhantomFile(path)
-  
+  import File._
+
+  val _file = jsEnv match {
+    case Phantom => new PhantomFile(path)
+    case Rhino => new RhinoFile(path)
+    case Node => new NodeFile(path)
+  }  
 
   def this(path: String, child: String) = {
     this(File.pathJoin(path, child))
@@ -50,12 +54,15 @@ class File(path: String) {
 
 object File {
   sealed trait JSEnv
+  case object Rhino extends JSEnv
   case object Node extends JSEnv
   case object Phantom extends JSEnv
-
-  val jsEnv = if (!js.Dynamic.global.hasOwnProperty("window").asInstanceOf[Boolean])
+  
+  val jsEnv = if (js.Dynamic.global.hasOwnProperty("Packages").asInstanceOf[Boolean])
+    Rhino
+  else if(!js.Dynamic.global.hasOwnProperty("window").asInstanceOf[Boolean])
     Node
-  else
+  else if(js.Dynamic.global.hasOwnProperty("_phantom").asInstanceOf[Boolean])
     Phantom
 
   def pathJoin(path: String, child: String): String = 

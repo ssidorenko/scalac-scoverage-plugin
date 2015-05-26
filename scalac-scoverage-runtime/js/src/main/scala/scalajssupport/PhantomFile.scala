@@ -3,7 +3,7 @@ package scalajssupport
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 
-class PhantomFile(path: String) extends JsFile {
+class PhantomFile(path: String) with JsFile {
   def this(path: String, child: String) = {
     this(PhantomFile.pathJoin(path, child))
   }

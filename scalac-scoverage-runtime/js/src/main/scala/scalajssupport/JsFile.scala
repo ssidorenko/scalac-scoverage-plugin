@@ -1,6 +1,6 @@
 package scalajssupport
 
-abstract class JsFile {
+trait JsFile {
   def delete(): Unit
   def getAbsolutePath(): String 
 

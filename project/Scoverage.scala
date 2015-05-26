@@ -31,6 +31,7 @@ object Scoverage extends Build {
     resolvers := ("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2") +: resolvers.value,
     concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
     javacOptions := Seq("-source", "1.6", "-target", "1.6"),
+    javaOptions += "-XX:MaxMetaspaceSize=512m",
     publishTo <<= version {
       (v: String) =>
         val nexus = "https://oss.sonatype.org/"
@@ -83,10 +84,11 @@ object Scoverage extends Build {
     ))
     .jsSettings(
       libraryDependencies += "com.lihaoyi" %%% "utest" % "0.3.0",
-      testFrameworks += new TestFramework("utest.runner.Framework"),
-      scalaJSStage := FastOptStage,
+      testFrameworks += new TestFramework("utest.runner.Framework")
+      /*scalaJSStage := FastOptStage,
       jsDependencies += RuntimeDOM,
       postLinkJSEnv := new ScoveragePhantomJSEnv(jettyClassLoader=scalaJSPhantomJSClassLoader.value)
+      */
     )
 
   lazy val `scalac-scoverage-runtimeJVM` = runtime.jvm
