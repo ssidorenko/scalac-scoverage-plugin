@@ -31,7 +31,7 @@ object Scoverage extends Build {
     resolvers := ("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2") +: resolvers.value,
     concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
     javacOptions := Seq("-source", "1.6", "-target", "1.6"),
-    javaOptions += "-XX:MaxMetaspaceSize=512m",
+    javaOptions += "-XX:MaxMetaspaceSize=2048m",
     publishTo <<= version {
       (v: String) =>
         val nexus = "https://oss.sonatype.org/"

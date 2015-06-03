@@ -52,6 +52,7 @@ class File(path: String) {
   }
 }
 
+
 object File {
   sealed trait JSEnv
   case object Rhino extends JSEnv
@@ -65,15 +66,19 @@ object File {
   else if(js.Dynamic.global.hasOwnProperty("_phantom").asInstanceOf[Boolean])
     Phantom
 
+  // Factorize this
+
   def pathJoin(path: String, child: String): String = 
     jsEnv match {
       case Phantom => PhantomFile.pathJoin(path, child)
       case Node => NodeFile.nodePath.join(path, child)
+      case Rhino => (new RhinoFile(path, child)).getPath()
     }
 
   def write(path: String, data: String, mode: String = "a") = 
     jsEnv match {
       case Phantom => PhantomFile.write(path, data, mode)
       case Node => NodeFile.fs.writeFileSync(path, data, js.Dynamic.literal(flag=mode))
+      case Rhino => RhinoFile.write(path, data, mode)
     }
 }

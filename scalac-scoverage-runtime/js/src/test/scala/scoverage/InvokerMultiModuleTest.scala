@@ -33,8 +33,8 @@ object InvokerTest extends TestSuite {
       val idsFromFile1 = Invoker.invoked(measurementFiles1).toSet
       idsFromFile1 == testIds.filter { i: Int => i % 2 == 1 }
 
-      deleteMeasurementFiles()
-      measurementDir.foreach(_.delete)
+      //deleteMeasurementFiles()
+      //measurementDir.foreach(_.delete)
     }
   }
 }
