@@ -3,7 +3,7 @@ package scoverage
 import java.io.File
 import java.util.concurrent.Executors
 
-import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.scalatest.{ BeforeAndAfter, FunSuite }
 
 import scala.collection.breakOut
 import scala.concurrent._

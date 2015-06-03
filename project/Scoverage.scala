@@ -3,6 +3,12 @@ import sbt._
 import sbtrelease.ReleasePlugin
 import sbtrelease.ReleasePlugin.ReleaseKeys
 import com.typesafe.sbt.pgp.PgpKeys
+import org.scalajs.sbtplugin.cross.CrossProject
+import org.scalajs.sbtplugin.cross.CrossType
+import org.scalajs.sbtplugin.ScalaJSPlugin
+import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+//import org.scalajs.jsenv.phantomjs.PhantomJSEnv
+
 
 object Scoverage extends Build {
 
@@ -25,10 +31,7 @@ object Scoverage extends Build {
     resolvers := ("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2") +: resolvers.value,
     concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
     javacOptions := Seq("-source", "1.6", "-target", "1.6"),
-    libraryDependencies ++= Seq(
-      "org.mockito" % "mockito-all" % MockitoVersion % "test",
-      "org.scalatest" %% "scalatest" % ScalatestVersion % "test"
-    ),
+    javaOptions += "-XX:MaxMetaspaceSize=2048m",
     publishTo <<= version {
       (v: String) =>
         val nexus = "https://oss.sonatype.org/"
@@ -70,17 +73,30 @@ object Scoverage extends Build {
     .settings(name := "scalac-scoverage")
     .settings(appSettings: _*)
     .settings(publishArtifact := false)
-    .aggregate(plugin, runtime)
+    .aggregate(plugin, runtime.jvm, runtime.js)
 
-  lazy val runtime = Project("scalac-scoverage-runtime", file("scalac-scoverage-runtime"))
+  lazy val runtime = CrossProject("scalac-scoverage-runtime", file("scalac-scoverage-runtime"), CrossType.Full)
     .settings(name := "scalac-scoverage-runtime")
     .settings(appSettings: _*)
+    .jvmSettings(libraryDependencies ++= Seq(
+      "org.mockito" % "mockito-all" % MockitoVersion % "test",
+      "org.scalatest" %% "scalatest" % ScalatestVersion % "test"
+    ))
+    .jsSettings(
+      libraryDependencies += "com.lihaoyi" %%% "utest" % "0.3.0",
+      testFrameworks += new TestFramework("utest.runner.Framework")
+    )
+
+  lazy val `scalac-scoverage-runtimeJVM` = runtime.jvm
+  lazy val `scalac-scoverage-runtimeJS` = runtime.js
 
   lazy val plugin = Project("scalac-scoverage-plugin", file("scalac-scoverage-plugin"))
-    .dependsOn(runtime % "test")
+    .dependsOn(`scalac-scoverage-runtimeJVM` % "test")
     .settings(name := "scalac-scoverage-plugin")
     .settings(appSettings: _*)
     .settings(libraryDependencies ++= Seq(
+    "org.mockito" % "mockito-all" % MockitoVersion % "test",
+    "org.scalatest" %% "scalatest" % ScalatestVersion % "test",
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
     "org.scala-lang" % "scala-compiler" % scalaVersion.value % "provided",
     "org.joda" % "joda-convert" % "1.6" % "test",
