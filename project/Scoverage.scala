@@ -85,10 +85,9 @@ object Scoverage extends Build {
     .jsSettings(
       libraryDependencies += "com.lihaoyi" %%% "utest" % "0.3.0",
       testFrameworks += new TestFramework("utest.runner.Framework")
-      /*scalaJSStage := FastOptStage,
-      jsDependencies += RuntimeDOM,
-      postLinkJSEnv := new ScoveragePhantomJSEnv(jettyClassLoader=scalaJSPhantomJSClassLoader.value)
-      */
+      scalaJSStage := FastOptStage,
+      /*jsDependencies += RuntimeDOM,
+      postLinkJSEnv := new ScoveragePhantomJSEnv(jettyClassLoader=scalaJSPhantomJSClassLoader.value)*/
     )
 
   lazy val `scalac-scoverage-runtimeJVM` = runtime.jvm

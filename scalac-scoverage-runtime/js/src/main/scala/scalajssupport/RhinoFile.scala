@@ -33,68 +33,53 @@ class RhinoFile(_file: NativeRhinoFile) extends JsFile {
     this((new NativeRhinoFile(path, child)))
   }
 
-  def delete(): Unit = debug("delete")(_file.delete())
+  def delete(): Unit = _file.delete()
 
-  def getAbsolutePath(): String = debug("getAbsolute")("" + _file.getAbsolutePath())
+  def getAbsolutePath(): String = "" + _file.getAbsolutePath()
 
-  def getName(): String = debug("getname")("" + _file.getName())
+  def getName(): String = "" + _file.getName()
 
-  def getPath(): String = debug("getPath")
-    {
+  def getPath(): String = {
       "" + _file.getPath() // Rhino bug: doesn't seem to actually returns a string, we have to convert it ourselves
     }
 
-  def isDirectory(): Boolean = debug("isDirectory")(_file.isDirectory())
+  def isDirectory(): Boolean = _file.isDirectory()
 
-  def mkdirs(): Unit = debug("mkdirs")(_file.mkdirs())
+  def mkdirs(): Unit = _file.mkdirs()
 
   def listFiles(): Array[File] = {
-    println("ok")
-
     val files = _file.listFiles()
-    println(files(0))
     val filesArray = new Array[File](files.length)
     for ((item, i) <- filesArray.zipWithIndex) {
       filesArray(i) = new File("" + files(i).getAbsolutePath())
     }
-    println("fin")
     filesArray
   }
 
-  def readFile(): String = debug("readfile"){
-     //val scanner = jsnew(g.Packages.java.util.Scanner)(_file).useDelimiter("\\Z").next().toString
+  def readFile(): String = {
      val fis = jsnew(g.Packages.java.io.FileInputStream)(_file)
      val data = g.Packages.java.lang.reflect.Array.newInstance(
          g.Packages.java.lang.Byte.TYPE, _file.length()
      )
      fis.read(data)
      fis.close()
-     println(data)
-     println("ook")
-     println(data.toString())
-     println("ookk")
      "" + jsnew(g.Packages.java.lang.String)(data)
-  }
-
-  def debug[A](msg: String)(b: => A): A = {
-    println("debut " + msg)
-    val r = b
-    println("fin" + msg)
-    r
   }
 }
 
 
-private[scalajssupport] object RhinoFile {
-  def write(path: String, data: String, mode: String) = debug("write"){
+private[scalajssupport] object RhinoFile extends JsFileObject {
+  def write(path: String, data: String, mode: String) = {
     val outputstream = jsnew(g.Packages.java.io.FileOutputStream)(path, mode == "a")
     val jString = jsnew(g.Packages.java.lang.String)(data)
     outputstream.write(jString.getBytes())
   }
-  def debug[A](msg: String)(b: => A): A = {
-    println("debut " + msg)
-    val r = b
-    println("fin" + msg)
-    r
+
+  def pathJoin(path: String, child: String) = {
+    "" + (new NativeRhinoFile(path, child)).getPath()
+  }
+
+  def apply(path: String) = {
+    new RhinoFile(path)
   }
 }

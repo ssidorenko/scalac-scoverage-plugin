@@ -6,11 +6,7 @@ import js.Dynamic.{global => g}
 class File(path: String) {
   import File._
 
-  val _file = jsEnv match {
-    case Phantom => new PhantomFile(path)
-    case Rhino => new RhinoFile(path)
-    case Node => new NodeFile(path)
-  }  
+  val _file = jsFile(path)
 
   def this(path: String, child: String) = {
     this(File.pathJoin(path, child))
@@ -54,31 +50,17 @@ class File(path: String) {
 
 
 object File {
-  sealed trait JSEnv
-  case object Rhino extends JSEnv
-  case object Node extends JSEnv
-  case object Phantom extends JSEnv
-  
-  val jsEnv = if (js.Dynamic.global.hasOwnProperty("Packages").asInstanceOf[Boolean])
-    Rhino
+  val jsFile: JsFileObject = if (js.Dynamic.global.hasOwnProperty("Packages").asInstanceOf[Boolean])
+    RhinoFile
   else if(!js.Dynamic.global.hasOwnProperty("window").asInstanceOf[Boolean])
-    Node
-  else if(js.Dynamic.global.hasOwnProperty("_phantom").asInstanceOf[Boolean])
-    Phantom
-
+    NodeFile
+  else 
+    PhantomFile
   // Factorize this
 
   def pathJoin(path: String, child: String): String = 
-    jsEnv match {
-      case Phantom => PhantomFile.pathJoin(path, child)
-      case Node => NodeFile.nodePath.join(path, child)
-      case Rhino => (new RhinoFile(path, child)).getPath()
-    }
+    jsFile.pathJoin(path, child)
 
   def write(path: String, data: String, mode: String = "a") = 
-    jsEnv match {
-      case Phantom => PhantomFile.write(path, data, mode)
-      case Node => NodeFile.fs.writeFileSync(path, data, js.Dynamic.literal(flag=mode))
-      case Rhino => RhinoFile.write(path, data, mode)
-    }
+    jsFile.write(path, data, mode)
 }

@@ -24,3 +24,9 @@ trait JsFile {
 trait FileFilter {
   def accept(file: File): Boolean
 }
+
+trait JsFileObject {
+  def write(path: String, data: String, mode: String = "a")
+  def pathJoin(path: String, child: String): String
+  def apply(path: String): JsFile
+}

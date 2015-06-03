@@ -77,7 +77,7 @@ trait FS extends js.Object {
   def readFileSync(path: String, options:js.Dynamic): String = js.native
   def rmdirSync(path: String): Unit = js.native
   def unlinkSync(path: String): Unit = js.native
-  def writeFileSync(path: String, content: String, options:js.Dynamic = js.Dynamic.literal()): Unit = js.native
+  def writeFileSync(path: String, data: String, options:js.Dynamic = js.Dynamic.literal()): Unit = js.native
 }
 
 trait NodePath extends js.Object {
@@ -85,7 +85,18 @@ trait NodePath extends js.Object {
   def join(paths: String*): String = js.native
 }
 
-private[scalajssupport] object NodeFile {
+private[scalajssupport] object NodeFile extends JsFileObject {
   val fs: FS = js.Dynamic.global.require("fs").asInstanceOf[FS]
   val nodePath: NodePath = js.Dynamic.global.require("path").asInstanceOf[NodePath]
+  def write(path: String, data: String, mode: String = "a") = {
+    fs.writeFileSync(path, data, js.Dynamic.literal(flag=mode))
+  }
+
+  def pathJoin(path: String, child: String) = {
+    nodePath.join(path, child)
+  }
+
+  def apply(path: String) = {
+    new NodeFile(path)
+  }
 }

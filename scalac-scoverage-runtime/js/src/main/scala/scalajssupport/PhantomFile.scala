@@ -49,7 +49,7 @@ class PhantomFile(path: String) extends JsFile {
 }
 
 
-private[scalajssupport] object PhantomFile {
+private[scalajssupport] object PhantomFile extends JsFileObject {
   def fsCall(method: String, args: js.Array[js.Any]): js.Dynamic = {
     val d = js.Dynamic.global.callPhantom(js.Dynamic.literal(
       action="require.fs",
@@ -71,7 +71,11 @@ private[scalajssupport] object PhantomFile {
   def removeDirectory(path: String): Boolean = fsCall("removeDirectory", path).asInstanceOf[Boolean]
   val separator: String = fsCall("separator").asInstanceOf[String]
   def write(path: String, content: String, mode: String): Unit = fsCall("write", js.Array(path, content, mode))
-  def pathJoin(base: String, name: String): String = {
-      return base + separator + name
+  def pathJoin(path: String, child: String): String = {
+      return path + separator + child
+  }
+
+  def apply(path: String) = {
+    new PhantomFile(path)
   }
 }
