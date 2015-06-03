@@ -40,8 +40,8 @@ class RhinoFile(_file: NativeRhinoFile) extends JsFile {
   def getName(): String = "" + _file.getName()
 
   def getPath(): String = {
-      "" + _file.getPath() // Rhino bug: doesn't seem to actually returns a string, we have to convert it ourselves
-    }
+    "" + _file.getPath() // Rhino bug: doesn't seem to actually returns a string, we have to convert it ourselves
+  }
 
   def isDirectory(): Boolean = _file.isDirectory()
 
@@ -57,16 +57,15 @@ class RhinoFile(_file: NativeRhinoFile) extends JsFile {
   }
 
   def readFile(): String = {
-     val fis = jsnew(g.Packages.java.io.FileInputStream)(_file)
-     val data = g.Packages.java.lang.reflect.Array.newInstance(
-         g.Packages.java.lang.Byte.TYPE, _file.length()
-     )
-     fis.read(data)
-     fis.close()
-     "" + jsnew(g.Packages.java.lang.String)(data)
+    val fis = jsnew(g.Packages.java.io.FileInputStream)(_file)
+    val data = g.Packages.java.lang.reflect.Array.newInstance(
+      g.Packages.java.lang.Byte.TYPE, _file.length()
+    )
+    fis.read(data)
+    fis.close()
+    "" + jsnew(g.Packages.java.lang.String)(data)
   }
 }
-
 
 private[scalajssupport] object RhinoFile extends JsFileObject {
   def write(path: String, data: String, mode: String) = {

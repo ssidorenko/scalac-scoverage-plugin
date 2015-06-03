@@ -1,7 +1,7 @@
 package scalajssupport
 
 import scala.scalajs.js
-import js.Dynamic.{global => g}
+import js.Dynamic.{ global => g }
 
 class File(path: String) {
   import File._
@@ -35,7 +35,7 @@ class File(path: String) {
     _file.mkdirs()
   }
 
-  def listFiles(): Array[File]= {
+  def listFiles(): Array[File] = {
     _file.listFiles().toArray
   }
 
@@ -48,19 +48,18 @@ class File(path: String) {
   }
 }
 
-
 object File {
   val jsFile: JsFileObject = if (js.Dynamic.global.hasOwnProperty("Packages").asInstanceOf[Boolean])
     RhinoFile
-  else if(!js.Dynamic.global.hasOwnProperty("window").asInstanceOf[Boolean])
+  else if (!js.Dynamic.global.hasOwnProperty("window").asInstanceOf[Boolean])
     NodeFile
-  else 
+  else
     PhantomFile
   // Factorize this
 
-  def pathJoin(path: String, child: String): String = 
+  def pathJoin(path: String, child: String): String =
     jsFile.pathJoin(path, child)
 
-  def write(path: String, data: String, mode: String = "a") = 
+  def write(path: String, data: String, mode: String = "a") =
     jsFile.write(path, data, mode)
 }

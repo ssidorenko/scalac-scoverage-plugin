@@ -2,7 +2,7 @@ package scalajssupport
 
 trait JsFile {
   def delete(): Unit
-  def getAbsolutePath(): String 
+  def getAbsolutePath(): String
 
   def getName(): String
 
@@ -10,15 +10,15 @@ trait JsFile {
 
   def isDirectory(): Boolean
 
-  def mkdirs(): Unit 
+  def mkdirs(): Unit
 
-  def listFiles(): Array[File] 
+  def listFiles(): Array[File]
 
   def listFiles(filter: FileFilter): Array[File] = {
     listFiles().filter(filter.accept)
   }
 
-  def readFile(): String 
+  def readFile(): String
 }
 
 trait FileFilter {

@@ -27,8 +27,7 @@ class NodeFile(path: String) extends JsFile {
   def isDirectory(): Boolean = {
     try {
       NodeFile.fs.lstatSync(path).isDirectory()
-    }
-    catch {
+    } catch {
       // TODO find out what's the best way to deal with exceptions here
       // (likely not like this)
       case e: Exception => false
@@ -58,7 +57,7 @@ class NodeFile(path: String) extends JsFile {
   }
 
   def readFile(): String = {
-    NodeFile.fs.readFileSync(path, js.Dynamic.literal(encoding="utf-8"))
+    NodeFile.fs.readFileSync(path, js.Dynamic.literal(encoding = "utf-8"))
   }
 
 }
@@ -74,10 +73,10 @@ trait FS extends js.Object {
   def openSync(path: String, flags: String): Int = js.native
   def realpathSync(path: String): String = js.native
   def readdirSync(path: String): js.Array[String] = js.native
-  def readFileSync(path: String, options:js.Dynamic): String = js.native
+  def readFileSync(path: String, options: js.Dynamic): String = js.native
   def rmdirSync(path: String): Unit = js.native
   def unlinkSync(path: String): Unit = js.native
-  def writeFileSync(path: String, data: String, options:js.Dynamic = js.Dynamic.literal()): Unit = js.native
+  def writeFileSync(path: String, data: String, options: js.Dynamic = js.Dynamic.literal()): Unit = js.native
 }
 
 trait NodePath extends js.Object {
@@ -89,7 +88,7 @@ private[scalajssupport] object NodeFile extends JsFileObject {
   val fs: FS = js.Dynamic.global.require("fs").asInstanceOf[FS]
   val nodePath: NodePath = js.Dynamic.global.require("path").asInstanceOf[NodePath]
   def write(path: String, data: String, mode: String = "a") = {
-    fs.writeFileSync(path, data, js.Dynamic.literal(flag=mode))
+    fs.writeFileSync(path, data, js.Dynamic.literal(flag = mode))
   }
 
   def pathJoin(path: String, child: String) = {
